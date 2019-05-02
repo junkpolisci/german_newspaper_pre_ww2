@@ -8,14 +8,14 @@ library(tidyverse)
 # http://content.staatsbibliothek-berlin.de/zefys/SNP24344771-18570104-0-0-0-0.pdf
 # http://zefys.staatsbibliothek-berlin.de/index.php?id=title&no_cache=1&tx_zefyskalender_pi4%5Bzdb%5D=24344771&tx_zefyskalender_pi4%5Byear%5D=%2A
 # 
-# ###Neue Preuﬂische Zeitung - ID is 24350382 -- follows SNP
+# ###Neue Preu?ische Zeitung - ID is 24350382 -- follows SNP
 # http://content.staatsbibliothek-berlin.de/zefys/SNP24350382-18570101-0-0-0-0.pdf
 # http://content.staatsbibliothek-berlin.de/zefys/SNP24350382-18570103-0-0-0-0.pdf
 # http://content.staatsbibliothek-berlin.de/zefys/SNP24350382-18570104-0-0-0-0.pdf
 
 #generate all possible dates. This is a lazy way to loop, but will certainly get all possible dates.
 #this also removes non-numeric objects to paste into the URL later. This is testing to see if it works. 
-date <- stringr::str_replace_all(seq.Date(as.Date("1857-01-01"), as.Date("1957-12-31"), by = "day"),
+date <- stringr::str_replace_all(seq.Date(as.Date("1857-01-01"), as.Date("1946-12-31"), by = "day"),
                          pattern = "\\-" , 
                          "") 
 
@@ -63,7 +63,7 @@ name_id <- name_id %>%
            mutate(name_clean = stringr::str_replace_all(tolower(name),
                                                       "\\s",
                                                       "\\_"),
-                  uncount = 36889) %>% #I want one observation for each newspaper for each possible date 
+                  uncount = length(date)) %>% #I want one observation for each newspaper for each possible date 
            arrange(id) %>% 
            distinct() #noticed that there were some duplicates that this deletes 
 
@@ -76,7 +76,7 @@ name_id_uncount <- name_id %>%
 #add the date column 
 name_id_uncount <- name_id_uncount %>% 
                    group_by(id) %>% 
-                   mutate(date = stringr::str_replace_all(seq.Date(as.Date("1857-01-01"), as.Date("1957-12-31"), by = "day"),
+                   mutate(date = stringr::str_replace_all(seq.Date(as.Date("1857-01-01"), as.Date("1946-12-31"), by = "day"),
                                                           pattern = "\\-" , 
                                                           ""))
 #This tibble has the url, id, filename, and the newspaper name
@@ -96,17 +96,17 @@ for(i in 1:length(name_id$id)){
 dir.create(paste0(getwd(), "/test_papers/", name_id$id[i]))
 }
 
-tictoc::tic()
-for(i in 19710:20440){
-download.file(url_id_date$url[i], #download the pdf from this url 
-              paste0("./test_papers/", #file path - part 1
-                     url_id_date$id[i], #file path - part 2
-                     "/", #file path - part 3
-                     url_id_date$filename[i], #file name 
-                     ".pdf"), #file type 
-              mode = "wb") 
-              Sys.sleep(30)
-}
-tictoc::toc()
+# tictoc::tic()
+# for(i in 19710:20440){
+# download.file(url_id_date$url[i], #download the pdf from this url 
+#               paste0("./test_papers/", #file path - part 1
+#                      url_id_date$id[i], #file path - part 2
+#                      "/", #file path - part 3
+#                      url_id_date$filename[i], #file name 
+#                      ".pdf"), #file type 
+#               mode = "wb") 
+#               Sys.sleep(30)
+# }
+# tictoc::toc()
 
 
